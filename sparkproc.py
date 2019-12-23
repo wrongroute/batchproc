@@ -3,8 +3,8 @@ from pyspark.sql import SparkSession
 import sys
 
 
-def main():
-    input = "valueslist.csv"
+def main(arg):
+    input = arg
 
     spark = SparkSession.builder \
         .config("spark.driver.bindAddress", "127.0.0.1") \
