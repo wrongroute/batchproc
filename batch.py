@@ -37,7 +37,7 @@ class TimeSelect(Task):
         wl = bf.active
         allb = wl['B']
         tod = datetime.datetime.now()
-        delta = datetime.timedelta(days=2)
+        delta = datetime.timedelta(days=10)
         fulltime = tod - delta
         f = open(self.filename, 'w')
         for cell in allb:
@@ -82,6 +82,7 @@ class ValidValues(Task):
         wl = bf.active
         valuerows = []
         listrows = []
+        tod = datetime.datetime.now()
         with self.input().open('r') as valide:
             for line in valide:
                 cur = line[:-1]
@@ -89,7 +90,12 @@ class ValidValues(Task):
         validcells = wl['B'+listrows[0]:'G'+listrows[-1]]
         for row in validcells:
             for cell in row:
-                valuerows.append(cell.value)
+                if 'B' in cell.coordinate:
+                    valuerows.append(cell.value.strftime('%m/%d/%Y'))
+                elif 'C' in cell.coordinate:
+                    valuerows.append(cell.value.strftime('%I:%M'))
+                else:
+                    valuerows.append(cell.value)
         rowslist = [valuerows[i:i+6] for i in range(0, len(valuerows), 6)]
         with open(self.filename, 'w') as f:
             for row in rowslist:
@@ -99,5 +105,5 @@ class ValidValues(Task):
         return LocalTarget(self.filename)
 
 if __name__ == '__main__':
-    #luigi.build([TimeSelect()])
-    luigi.run()
+    luigi.build([ValidValues()])
+    #luigi.run()
