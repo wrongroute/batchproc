@@ -2,6 +2,7 @@ import datetime
 import requests
 import luigi
 import openpyxl
+import csv
 from luigi import Task, LocalTarget
 
 
@@ -72,7 +73,7 @@ class FiledSelect(Task):
 
 class ValidValues(Task):
 
-    filename = "valueslist.txt"
+    filename = "valueslist.csv"
 
     def requires(self):
         return FiledSelect()
@@ -97,9 +98,11 @@ class ValidValues(Task):
                 else:
                     valuerows.append(cell.value)
         rowslist = [valuerows[i:i+6] for i in range(0, len(valuerows), 6)]
-        with open(self.filename, 'w') as f:
-            for row in rowslist:
-                f.write('%s\n' % row)
+        writer = csv.writer(open(self.filename, 'w', newline=''), delimiter=',')
+        writer.writerow(['date', 'time', 'number', 'firm', 'source', 'target'])
+        for line in rowslist:
+            writer.writerow(line)
+
 
     def output(self):
         return LocalTarget(self.filename)
