@@ -1,11 +1,21 @@
 from pyspark.sql import SparkSession
-from pyspark.sql import SQLContext
+# from pyspark.sql import SQLContext
+import sys
 
 
-def main(argv):
-    input = argv[1]
+def main():
+    input = "valueslist.csv"
 
-    spark = SparkSession.builder.getOrCreate()
-    df = spark.read.csv(input, header = "true")
+    spark = SparkSession.builder \
+        .config("spark.driver.bindAddress", "127.0.0.1") \
+        .master("local[*]") \
+        .appName("Row Count") \
+        .getOrCreate()
 
+    df = spark.read.csv(input, header="true")
     hotstreet = df.groupBy("source").count()
+
+    hotstreet.coalesce(1).write.csv("countstreet", sep=',', encoding='UTF-8', header='True')
+
+ if __name__ == '__main__':
+    sys.exit(main(sys.argv))
