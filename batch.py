@@ -4,10 +4,10 @@ import luigi
 import openpyxl
 import csv
 from luigi import Task, LocalTarget
+import luigi.contrib.spark
 
 
 class DownloadData(Task):
-
     filename = 'data.xlsx'
     api = 'https://cloud-api.yandex.net/v1/disk/public/resources/download?public_key={}'
 
@@ -27,7 +27,6 @@ class DownloadData(Task):
 
 
 class TimeSelect(Task):
-
     filename = "timecoord.txt"
 
     def requires(self):
@@ -50,8 +49,8 @@ class TimeSelect(Task):
     def output(self):
         return LocalTarget(self.filename)
 
-class FiledSelect(Task):
 
+class FiledSelect(Task):
     filename = "filedcoord.txt"
 
     def requires(self):
@@ -71,8 +70,8 @@ class FiledSelect(Task):
     def output(self):
         return LocalTarget(self.filename)
 
-class ValidValues(Task):
 
+class ValidValues(Task):
     filename = "valueslist.csv"
 
     def requires(self):
@@ -88,7 +87,7 @@ class ValidValues(Task):
             for line in valide:
                 cur = line[:-1]
                 listrows.append(cur)
-        validcells = wl['B'+listrows[0]:'G'+listrows[-1]]
+        validcells = wl['B' + listrows[0]:'G' + listrows[-1]]
         for row in validcells:
             for cell in row:
                 if 'B' in cell.coordinate:
@@ -97,16 +96,28 @@ class ValidValues(Task):
                     valuerows.append(cell.value.strftime('%I:%M'))
                 else:
                     valuerows.append(cell.value)
-        rowslist = [valuerows[i:i+6] for i in range(0, len(valuerows), 6)]
-        writer = csv.writer(open(self.filename, 'w', newline=''), delimiter=',')
+        rowslist = [valuerows[i:i + 6] for i in range(0, len(valuerows), 6)]
+        writer = csv.writer(open(self.filename, 'w', newline='', encoding='UTF-8'), delimiter=',')
         writer.writerow(['date', 'time', 'number', 'firm', 'source', 'target'])
         for line in rowslist:
             writer.writerow(line)
 
-
     def output(self):
         return LocalTarget(self.filename)
 
+
+class SparkCount(luigi.contrib.spark.SparkSubmitTask):
+    app = "sparkproc.py"
+
+    def output(self):
+        return LocalTarget("countstreet")# next
+
+    def requires(self):
+        return ValidValues()
+
+    def app_options(self):
+       return [self.input().path]
+
 if __name__ == '__main__':
-    luigi.build([ValidValues()])
+    luigi.build([SparkCount()])
     #luigi.run()
