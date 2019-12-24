@@ -5,7 +5,14 @@ import openpyxl
 import csv
 from luigi import Task, LocalTarget
 import luigi.contrib.spark
+from pyspark.sql import SparkSession
+from prometheus_client import start_http_server, Summary
+import time
+import os
+from luigi.contrib.spark import PySparkTask
 
+values_time = Summary('request_processing_seconds', 'Time spent processing request')
+spark_time = Summary('request_sparkprocessing_seconds', 'Time spent sparkprocessing request')
 
 class DownloadData(Task):
     filename = 'data.xlsx'
@@ -77,6 +84,7 @@ class ValidValues(Task):
     def requires(self):
         return FiledSelect()
 
+    @values_time.time()
     def run(self):
         bf = openpyxl.load_workbook('data.xlsx')
         wl = bf.active
@@ -105,6 +113,9 @@ class ValidValues(Task):
     def output(self):
         return LocalTarget(self.filename)
 
+'''
+
+###Fail on Windows :(
 
 class SparkCount(luigi.contrib.spark.SparkSubmitTask):
     app = "sparkproc.py"
@@ -117,7 +128,36 @@ class SparkCount(luigi.contrib.spark.SparkSubmitTask):
 
     def app_options(self):
        return [self.input().path]
+'''
+
+class SparkCount(Task):
+
+    def output(self):
+        return LocalTarget("countstreet")  # next
+
+    def requires(self):
+        return ValidValues()
+
+    @spark_time.time()
+    def run(self):
+        input = self.input().path
+
+        spark = SparkSession.builder \
+            .config("spark.driver.bindAddress", "127.0.0.1") \
+            .master("local[*]") \
+            .appName("Row Count") \
+            .getOrCreate()
+
+        df = spark.read.csv(input, header="true")
+        hotstreet = df.groupBy("source").count()
+
+        hotstreet.coalesce(1).write.csv("countstreet", sep=',', encoding='UTF-8', header='True')
+
+        spark.stop()
 
 if __name__ == '__main__':
+    start_http_server(8000)
     luigi.build([SparkCount()])
     #luigi.run()
+    while True:
+        pass
