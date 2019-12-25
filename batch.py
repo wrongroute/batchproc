@@ -19,7 +19,7 @@ class DownloadData(Task):
     api = 'https://cloud-api.yandex.net/v1/disk/public/resources/download?public_key={}'
 
     def directlink(self):
-        pk_request = requests.get(self.api.format('https://yadi.sk/i/e0w3647Rdheb2Q'))
+        pk_request = requests.get(self.api.format('https://yadi.sk/i/awTwxgB2pXn8xw'))
         return pk_request.json().get('href')
 
     def run(self):
