@@ -23,7 +23,7 @@ height: 100%;
 }
 
 image, .logo {
-height: 95%;
+height: 100%;
 float: left;
 }
 
@@ -39,7 +39,7 @@ font-size: 16px;
 }
 
 .nav .titlelink {
-color: red;
+color: #d4004f;
 text-decoration-line: none; 
 line-height: 60px; 
 margin-left: 20px; 
@@ -64,11 +64,39 @@ padding-bottom: 100px;
 
 H4, .info-m {
 font-family: Open Sans, HelveticaNeue, Helvetica Neue, Helvetica, Arial, sans-serif;
-color: #2A3F5F;
+color: #d4004f;
 font-weight: normal;
+padding-top: 20px;
+padding-bottom: 20px;
+background: #e8e8e8;
+margin-top: 0px;
+border-radius: 5px;
+font-size: 25px;
 }
 
 .data-div {
 width: 90%;
 margin: auto;
+}
+
+tbody {
+font-size: 16px;
+}
+#tabs-parent {
+float: right;
+width:60%;
+height:100%;
+font-family: Open Sans, HelveticaNeue, Helvetica Neue, Helvetica, Arial, sans-serif;
+font-size: 15px;
+text-transform: uppercase;
+
+}
+
+#tabs {
+height: 100%;
+}
+
+.jsx-2137964197 {
+float:right;
+background: white !important;
 }
