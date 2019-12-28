@@ -6,6 +6,9 @@ import dash_table
 from dash.dependencies import Input, Output
 
 df = pd.read_csv('valueslist.csv')
+dates = df.date.unique()
+group = df.groupby('date').count()
+counts = group.number.values
 
 external_stylesheets = ['/static/smallcss.css']#'https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -20,7 +23,7 @@ app.layout = html.Div(className="o-div", children=[
                 html.A('S-parking', className="titlelink", href='/'),
                 dcc.Tabs(id="tabs", value='tab-1', children=[
                     dcc.Tab(label='Эвакуированные авто', value='tab-1'),
-                    dcc.Tab(label='Tab two', value='tab-2'),
+                    dcc.Tab(label='Статистика', value='tab-2'),
                     dcc.Tab(label='Tab three', value='tab-3')
                 ]),
 
@@ -60,6 +63,33 @@ def render_content(tab):
             ]
         )
     ])
+
+    if tab == 'tab-2':
+        return html.Div(
+    dcc.Graph(
+        figure=dict(
+            data=[
+                dict(
+                    x=[i for i in dates],
+                    y=[i for i in counts],
+                    name='За последние 5 дней',
+                    marker=dict(color='rgb(55, 83, 109)')
+                )
+            ],
+            layout=dict(
+                title='Количество эвакуаций в день',
+                showlegend=True,
+                legend=dict(
+                    x=0,
+                    y=0
+                ),
+                margin=dict(l=40, r=20, t=80, b=30)
+        )
+    ),
+        style = {'height': 300, 'weight': '100%'},
+                id = 'my-graph'
+        )
+)
 
 if __name__ == '__main__':
     app.run_server(debug=True)
