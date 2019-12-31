@@ -17,12 +17,12 @@ spark_time = Summary('request_sparkprocessing_seconds', 'Time spent sparkprocess
 class DownloadData(Task):
     filename = 'data.xlsx'
     api = 'https://cloud-api.yandex.net/v1/disk/public/resources/download?public_key={}'
-
     def directlink(self):
         pk_request = requests.get(self.api.format('https://yadi.sk/i/awTwxgB2pXn8xw'))
         return pk_request.json().get('href')
 
     def run(self):
+
         direct_link = self.directlink()
         if direct_link:
             download = requests.get(direct_link)
@@ -44,7 +44,7 @@ class TimeSelect(Task):
         wl = bf.active
         allb = wl['B']
         tod = datetime.datetime.now()
-        delta = datetime.timedelta(days=10)
+        delta = datetime.timedelta(days=11)
         fulltime = tod - delta
         f = open(self.filename, 'w')
         for cell in allb:
@@ -101,12 +101,12 @@ class ValidValues(Task):
                 if 'B' in cell.coordinate:
                     valuerows.append(cell.value.strftime('%m/%d/%Y'))
                 elif 'C' in cell.coordinate:
-                    valuerows.append(cell.value.strftime('%I:%M'))
+                    valuerows.append(cell.value.strftime('%H:%M'))
                 else:
                     valuerows.append(cell.value)
         rowslist = [valuerows[i:i + 6] for i in range(0, len(valuerows), 6)]
         writer = csv.writer(open(self.filename, 'w', newline='', encoding='UTF-8'), delimiter=',')
-        writer.writerow(['date', 'time', 'number', 'firm', 'source', 'target'])
+        writer.writerow(['Дата', 'Время', 'Номер', 'Производитель', 'Источник', 'Штрафстоянка'])
         for line in rowslist:
             writer.writerow(line)
 
@@ -114,8 +114,7 @@ class ValidValues(Task):
         return LocalTarget(self.filename)
 
 '''
-
-###Fail on Windows :(
+###Fails on Windows :(
 
 class SparkCount(luigi.contrib.spark.SparkSubmitTask):
     app = "sparkproc.py"
@@ -129,7 +128,7 @@ class SparkCount(luigi.contrib.spark.SparkSubmitTask):
     def app_options(self):
        return [self.input().path]
 '''
-
+'''
 class SparkCount(Task):
 
     def output(self):
@@ -154,10 +153,12 @@ class SparkCount(Task):
         hotstreet.coalesce(1).write.csv("countstreet", sep=',', encoding='UTF-8', header='True')
 
         spark.stop()
+'''
+
 
 if __name__ == '__main__':
     start_http_server(8000)
-    luigi.build([SparkCount()])
+    luigi.build([ValidValues()])
     #luigi.run()
     while True:
         pass
