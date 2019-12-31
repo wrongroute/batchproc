@@ -3,8 +3,9 @@ margin: 0px;
 }
 
 .o-div{
-background-image: url(/static/flecks.png);
+#background-image: url(/static/flecks.png);
 padding-bottom: 100px;
+background: linear-gradient( rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6) ), url("https://raw.githubusercontent.com/plotly/dash-docs/master/images/dash-pattern.png");
 }
 
 .nav, nav nav-pills {
@@ -68,15 +69,17 @@ color: #d4004f;
 font-weight: normal;
 padding-top: 20px;
 padding-bottom: 20px;
-background: #e8e8e8;
+background: #eff2f6;
+border: 1px solid #c5d0d6;
 margin-top: 0px;
-border-radius: 5px;
-font-size: 25px;
+border-radius: 2px;
+font-size: 20px;
 }
 
 .data-div {
 width: 90%;
 margin: auto;
+padding-top: 20px;
 }
 
 tbody {
@@ -87,7 +90,7 @@ float: right;
 width:60%;
 height:100%;
 font-family: Open Sans, HelveticaNeue, Helvetica Neue, Helvetica, Arial, sans-serif;
-font-size: 15px;
+font-size: 13px;
 text-transform: uppercase;
 
 }
