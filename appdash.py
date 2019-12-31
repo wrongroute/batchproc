@@ -86,7 +86,7 @@ def render_content(tab):
                 dict(
                     x=[i for i in dates],
                     y=[i for i in countsdate],
-                    name='За последние 5 дней',
+                    name='За последние 10 дней',
                     marker=dict(color='rgb(55, 83, 109)')
                 )
             ],
