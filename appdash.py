@@ -86,7 +86,7 @@ def render_content(tab):
                 dict(
                     x=[i for i in dates],
                     y=[i for i in countsdate],
-                    name='За последние 10 дней',
+                    name='За последние 5 дней',
                     marker=dict(color='rgb(55, 83, 109)')
                 )
             ],
@@ -167,11 +167,12 @@ def render_content(tab):
     )
 
     if tab == 'tab-3':
-        return html.Div(
+        return html.Div(style={'margin-top': '50px'}, children=[
                html.Iframe(src="https://yandex.ru/map-widget/v1/-/CGxQJ0--",
                 width="90%",
-                height="1000",
-            )
+
+                height="800",
+            )]
         )
 
 
