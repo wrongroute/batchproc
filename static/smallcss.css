@@ -1,0 +1,105 @@
+body {
+margin: 0px;
+}
+
+.o-div{
+#background-image: url(/static/flecks.png);
+padding-bottom: 100px;
+background: linear-gradient( rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6) ), url("https://raw.githubusercontent.com/plotly/dash-docs/master/images/dash-pattern.png");
+}
+
+.nav, nav nav-pills {
+background-color: white; 
+height: 60px;
+font-size: 2em;
+text-align: center;
+box-shadow: 0px 5px 5px 0px rgba(100, 100, 100, 0.1);
+margin-bottom: 50px;
+}
+
+.w-div {
+width: 80%;
+margin: auto;
+height: 100%;
+}
+
+image, .logo {
+height: 100%;
+float: left;
+}
+
+.nav .nav-link-btn {
+color: #2A3F5F;
+text-decoration-line: none; 
+line-height: 60px; 
+margin-left: 20px; 
+float: right; 
+font-family: Open Sans, HelveticaNeue, Helvetica Neue, Helvetica, Arial, sans-serif;
+text-transform: uppercase;
+font-size: 16px;
+}
+
+.nav .titlelink {
+color: #d4004f;
+text-decoration-line: none; 
+line-height: 60px; 
+margin-left: 20px; 
+float: left; 
+font-family: Open Sans, HelveticaNeue, Helvetica Neue, Helvetica, Arial, sans-serif; 
+text-transform: uppercase;
+font-size: 25px;
+}
+
+.cont-div {
+width: 80%;
+margin: auto;
+background-color: white;
+text-align: center; 
+background-color: white;
+border-radius: 5px;
+font-size: 1.2rem;
+box-shadow: rgb(240, 240, 240) 5px 5px 5px 0px;
+border: thin solid rgb(240, 240, 240);
+padding-bottom: 100px;
+}
+
+H4, .info-m {
+font-family: Open Sans, HelveticaNeue, Helvetica Neue, Helvetica, Arial, sans-serif;
+color: #d4004f;
+font-weight: normal;
+padding-top: 20px;
+padding-bottom: 20px;
+background: #eff2f6;
+border: 1px solid #c5d0d6;
+margin-top: 0px;
+border-radius: 2px;
+font-size: 20px;
+}
+
+.data-div {
+width: 90%;
+margin: auto;
+padding-top: 20px;
+}
+
+tbody {
+font-size: 16px;
+}
+#tabs-parent {
+float: right;
+width:60%;
+height:100%;
+font-family: Open Sans, HelveticaNeue, Helvetica Neue, Helvetica, Arial, sans-serif;
+font-size: 13px;
+text-transform: uppercase;
+
+}
+
+#tabs {
+height: 100%;
+}
+
+.jsx-2137964197 {
+float:right;
+background: white !important;
+}
