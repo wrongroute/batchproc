@@ -11,6 +11,8 @@ import time
 import os
 from luigi.contrib.spark import PySparkTask
 
+
+
 values_time = Summary('request_processing_seconds', 'Time spent processing request')
 spark_time = Summary('request_sparkprocessing_seconds', 'Time spent sparkprocessing request')
 
@@ -155,10 +157,10 @@ class SparkCount(Task):
         spark.stop()
 '''
 
-
 if __name__ == '__main__':
     start_http_server(8000)
-    luigi.build([ValidValues()])
+    #luigi.build([ValidValues()])
     #luigi.run()
     while True:
-        pass
+        luigi.build([ValidValues()])
+        time.sleep(500)
