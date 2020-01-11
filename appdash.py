@@ -3,9 +3,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
 import dash_table
-import self as self
 from dash.dependencies import Input, Output
-from dash.development.base_component import Component, _explicitize_args
 import time
 
 
