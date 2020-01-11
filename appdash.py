@@ -3,24 +3,28 @@ import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
 import dash_table
+import self as self
 from dash.dependencies import Input, Output
 from dash.development.base_component import Component, _explicitize_args
+import time
 
 
-
-df = pd.read_csv('valueslist.csv')
+#df = pd.read_csv('valueslist.csv')
+df = lambda: pd.read_csv('valueslist.csv')
 #first graph
-dates = df.Дата.unique()
-groupdate = df.groupby('Дата').count()
+dates = df().Дата.unique()
+groupdate = df().groupby('Дата').count()
 countsdate = groupdate.Номер.values
+
 #second graph
-sources = df.Источник.unique()
-groupsource = df.groupby('Источник').count()
+sources = df().Источник.unique()
+groupsource = df().groupby('Источник').count()
 countssource = groupsource.Номер.values
 vcountssource = [i for i in countssource if i > 3]
+
 #third
-targets = df.Штрафстоянка.unique()
-grouptarget = df.groupby('Штрафстоянка').count()
+targets = df().Штрафстоянка.unique()
+grouptarget = df().groupby('Штрафстоянка').count()
 countstarget = grouptarget.Номер.values
 
 external_stylesheets = ['/static/smallcss.css']#'https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -54,9 +58,9 @@ app.layout = html.Div(className="o-div", children=[
 def render_content(tab):
     if tab == 'tab-1':
         return html.Div(children=[html.H3(className="info-m", children='Эвакуированные автомобили города Сочи'),
-            html.Div(className="data-div", children=[dash_table.DataTable(data=df.sort_values(by=['Дата', 'Время'], ascending=False).to_dict('records'),
+            html.Div(className="data-div", children=[dash_table.DataTable(data=df().sort_values(by=['Дата', 'Время'], ascending=False).to_dict('records'),
                 id='datatable-interactivity',
-                columns=[{'id': c, 'name': c} for c in df.columns],
+                columns=[{'id': c, 'name': c} for c in df().columns],
                 filter_action="native",
                 page_action="native",
                 page_current= 0,
@@ -117,7 +121,6 @@ def render_content(tab):
                                        'y': 1,
                                        'x': 1,
                                        },
-                                # title='Количество эвакуаций по улицам',
                                 hoverinfo="label+value",
                                 textinfo="label",
                                 hole=0.5,
@@ -146,7 +149,6 @@ def render_content(tab):
                                        'y': 1,
                                        'x': 1,
                                        },
-                                # title='Количество эвакуаций по улицам',
                                 hoverinfo="label+value",
                                 textinfo="label",
                                 hole=0.65,
