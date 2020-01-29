@@ -7,20 +7,20 @@ from dash.dependencies import Input, Output
 import time
 
 
-#df = pd.read_csv('valueslist.csv')
+# df = pd.read_csv('valueslist.csv')
 df = lambda: pd.read_csv('valueslist.csv')
-#first graph
+# first graph
 dates = df().Дата.unique()
 groupdate = df().groupby('Дата').count()
 countsdate = groupdate.Номер.values
 
-#second graph
+# second graph
 sources = df().Источник.unique()
 groupsource = df().groupby('Источник').count()
 countssource = groupsource.Номер.values
 vcountssource = [i for i in countssource if i > 3]
 
-#third
+# third
 targets = df().Штрафстоянка.unique()
 grouptarget = df().groupby('Штрафстоянка').count()
 countstarget = grouptarget.Номер.values
@@ -33,22 +33,21 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 app.layout = html.Div(className="o-div", children=[
     html.Nav(className="nav nav-pills", children=[
-            html.Div(className="w-div", children=[
-                html.Img(src="/static/parkin.png", className="logo"),
-                html.A('S-parking', className="titlelink", href='/'),
-                dcc.Tabs(id="tabs", value='tab-1', children=[
-                    dcc.Tab(label='Эвакуированные авто', value='tab-1'),
-                    dcc.Tab(label='Статистика эвакуаций', value='tab-2'),
-                    dcc.Tab(label='Общественные парковки', value='tab-3')
-                ]),
+        html.Div(className="w-div", children=[
+            html.Img(src="/static/parkin.png", className="logo"),
+            html.A('S-parking', className="titlelink", href='/'),
+            dcc.Tabs(id="tabs", value='tab-1', children=[
+                dcc.Tab(label='Эвакуированные авто', value='tab-1'),
+                dcc.Tab(label='Статистика эвакуаций', value='tab-2'),
+                dcc.Tab(label='Общественные парковки', value='tab-3')
+            ]),
 
-                ]
-            )
-        ]
-    ),
+        ])
+    ]),
     html.Div(className="cont-div", children=[
-    html.Div(id='tabs-content')
-    ])])
+        html.Div(id='tabs-content')
+    ])
+])
 
 @app.callback(Output('tabs-content', 'children'),
               [Input('tabs', 'value')])
@@ -56,55 +55,56 @@ app.layout = html.Div(className="o-div", children=[
 def render_content(tab):
     if tab == 'tab-1':
         return html.Div(children=[html.H3(className="info-m", children='Эвакуированные автомобили города Сочи'),
-            html.Div(className="data-div", children=[dash_table.DataTable(data=df().sort_values(by=['Дата', 'Время'], ascending=False).to_dict('records'),
-                id='datatable-interactivity',
-                columns=[{'id': c, 'name': c} for c in df().columns],
-                filter_action="native",
-                page_action="native",
-                page_current= 0,
-                page_size= 50,
-                style_header={
-                    'fontWeight': 'bold'
-                    },
-                style_cell_conditional=[
-                    {
-                    'font-family': 'Open Sans, HelveticaNeue, Helvetica Neue, Helvetica, Arial, sans-serif',
-                    'font-size': '16px',
-                    'text-align': 'center'
-                    }
+            html.Div(
+                className="data-div", children=[
+                    dash_table.DataTable(
+                        data=df().sort_values(by=['Дата', 'Время'], ascending=False).to_dict('records'),
+                        id='datatable-interactivity',
+                        columns=[{'id': c, 'name': c} for c in df().columns],
+                        filter_action="native",
+                        page_action="native",
+                        page_current= 0,
+                        page_size= 50,
+                        style_header={
+                            'fontWeight': 'bold'
+                        },
+                        style_cell_conditional=[{
+                            'font-family': 'Open Sans, HelveticaNeue, Helvetica Neue, Helvetica, Arial, sans-serif',
+                            'font-size': '16px',
+                            'text-align': 'center'
+                        }]
+                    ),
+                    html.Div(id='datatable-interactivity-container')
                 ]
-            ),
-            html.Div(id='datatable-interactivity-container')
-            ]
-        )
-    ])
+            )
+        ])
 
     if tab == 'tab-2':
         return html.Div(children=[html.H3(className="info-m", children='Статистика автомобильных эвакуаций в городе Сочи'),
             html.Div(className="data-div", children=[
-    dcc.Graph(
-        figure=dict(
-            data=[
-                dict(
-                    x=[i for i in dates],
-                    y=[i for i in countsdate],
-                    name='За последние 5 дней',
-                    marker=dict(color='rgb(55, 83, 109)')
-                )
-            ],
-            layout=dict(
-                title='Количество эвакуаций в день',
-                showlegend=True,
-                legend=dict(
-                    x=0,
-                    y=0
+                dcc.Graph(
+                    figure=dict(
+                        data=[
+                            dict(
+                                x=[i for i in dates],
+                                y=[i for i in countsdate],
+                                name='За последние 10 дней',
+                                marker=dict(color='rgb(55, 83, 109)')
+                            )
+                        ],
+                        layout=dict(
+                            title='Количество эвакуаций в день',
+                            showlegend=True,
+                            legend=dict(
+                                x=0,
+                                y=0
+                            ),
+                            margin=dict(l=40, r=20, t=80, b=30)
+                        )
+                    ),
+                    style={'height': 400, 'weight': '100%'},
+                    id='my-graph'
                 ),
-                margin=dict(l=40, r=20, t=80, b=30)
-        )
-    ),
-        style={'height': 400, 'weight': '100%'},
-                id='my-graph'
-        ),
 
                 dcc.Graph(
                     figure=dict(
@@ -116,9 +116,9 @@ def render_content(tab):
                                 values=[i for i in vcountssource],
                                 name="Sources",
                                 title={'text': "Активность по улицам",
-                                       'y': 1,
-                                       'x': 1,
-                                       },
+                                    'y': 1,
+                                    'x': 1,
+                                },
                                 hoverinfo="label+value",
                                 textinfo="label",
                                 hole=0.5,
@@ -138,7 +138,7 @@ def render_content(tab):
                     figure=dict(
                         data=[
                             dict(
-                                #autosize=True,
+                                # autosize=True,
                                 type="pie",
                                 labels=[i for i in targets],
                                 values=[i for i in countstarget],
@@ -163,16 +163,12 @@ def render_content(tab):
                 )
 
 
-    ])]
-    )
+            ])
+        ])
 
     if tab == 'tab-3':
         return html.Div(style={'margin-top': '50px'}, children=[
-               html.Iframe(src="https://yandex.ru/map-widget/v1/-/CGxQJ0--",
-                width="90%",
-
-                height="800",
-            )]
+            html.Iframe(src="https://yandex.ru/map-widget/v1/-/CGxQJ0--", width="90%",height="800")]
         )
 
 
