@@ -1,10 +1,10 @@
-FROM python:3.8.1-alpine3.11
+FROM python:latest
 
 WORKDIR /appdash
 
 COPY . /appdash
 
-RUN pip install -r requirements.txt
+RUN pip --no-cache-dir install -r requirements.txt
 
 EXPOSE 8000
 
