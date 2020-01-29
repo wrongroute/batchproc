@@ -54,7 +54,8 @@ app.layout = html.Div(className="o-div", children=[
 
 def render_content(tab):
     if tab == 'tab-1':
-        return html.Div(children=[html.H3(className="info-m", children='Эвакуированные автомобили города Сочи'),
+        return html.Div(children=[
+            html.H3(className="info-m", children='Эвакуированные автомобили города Сочи'),
             html.Div(
                 className="data-div", children=[
                     dash_table.DataTable(
@@ -80,7 +81,8 @@ def render_content(tab):
         ])
 
     if tab == 'tab-2':
-        return html.Div(children=[html.H3(className="info-m", children='Статистика автомобильных эвакуаций в городе Сочи'),
+        return html.Div(children=[
+            html.H3(className="info-m", children='Статистика автомобильных эвакуаций в городе Сочи'),
             html.Div(className="data-div", children=[
                 dcc.Graph(
                     figure=dict(
