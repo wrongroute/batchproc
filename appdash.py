@@ -4,8 +4,9 @@ import dash_html_components as html
 import pandas as pd
 import dash_table
 from dash.dependencies import Input, Output
+from multiprocessing import Process
+import batch
 import time
-
 
 # df = pd.read_csv('valueslist.csv')
 df = lambda: pd.read_csv('valueslist.csv')
@@ -25,11 +26,9 @@ targets = df().Штрафстоянка.unique()
 grouptarget = df().groupby('Штрафстоянка').count()
 countstarget = grouptarget.Номер.values
 
-external_stylesheets = ['/static/smallcss.css']#'https://codepen.io/chriddyp/pen/bWLwgP.css']
-
+external_stylesheets = ['/static/smallcss.css']  # 'https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-
 
 app.layout = html.Div(className="o-div", children=[
     html.Nav(className="nav nav-pills", children=[
@@ -49,9 +48,9 @@ app.layout = html.Div(className="o-div", children=[
     ])
 ])
 
+
 @app.callback(Output('tabs-content', 'children'),
               [Input('tabs', 'value')])
-
 def render_content(tab):
     if tab == 'tab-1':
         return html.Div(children=[
@@ -64,8 +63,8 @@ def render_content(tab):
                         columns=[{'id': c, 'name': c} for c in df().columns],
                         filter_action="native",
                         page_action="native",
-                        page_current= 0,
-                        page_size= 50,
+                        page_current=0,
+                        page_size=50,
                         style_header={
                             'fontWeight': 'bold'
                         },
@@ -118,9 +117,9 @@ def render_content(tab):
                                 values=[i for i in vcountssource],
                                 name="Sources",
                                 title={'text': "Активность по улицам",
-                                    'y': 1,
-                                    'x': 1,
-                                },
+                                       'y': 1,
+                                       'x': 1,
+                                       },
                                 hoverinfo="label+value",
                                 textinfo="label",
                                 hole=0.5,
@@ -164,16 +163,35 @@ def render_content(tab):
                     id='my-pie2'
                 )
 
-
             ])
         ])
 
     if tab == 'tab-3':
         return html.Div(style={'margin-top': '50px'}, children=[
-            html.Iframe(src="https://yandex.ru/map-widget/v1/-/CGxQJ0--", width="90%",height="800")]
-        )
+            html.Iframe(src="https://yandex.ru/map-widget/v1/-/CGxQJ0--", width="90%", height="800")
+        ])
 
+
+
+def batchCycle():
+    while True:
+        batch.luigi.build([batch.ValidValues()])
+        time.sleep(300)
+
+
+def runsrv():
+    app.scripts.config.serve_locally = True
+    app.run_server(
+    port=8050,
+    debug=False,
+    #processes=4,
+    threaded=False
+    )
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    #app.run_server(debug=True)
+    p1 = Process(target=batchCycle)
+    p2 = Process(target=runsrv)
+    p2.start()
+    p1.start()
