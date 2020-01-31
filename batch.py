@@ -1,30 +1,30 @@
 import datetime
 import requests
-import luigi
+# import luigi
 import openpyxl
 import csv
 from luigi import Task, LocalTarget
 import luigi.contrib.spark
-from pyspark.sql import SparkSession
+# from pyspark.sql import SparkSession
 from prometheus_client import start_http_server, Summary
 import time
 import os
-from luigi.contrib.spark import PySparkTask
-
+# from luigi.contrib.spark import PySparkTask
 
 
 values_time = Summary('request_processing_seconds', 'Time spent processing request')
 spark_time = Summary('request_sparkprocessing_seconds', 'Time spent sparkprocessing request')
 
+
 class DownloadData(Task):
     filename = 'data.xlsx'
     api = 'https://cloud-api.yandex.net/v1/disk/public/resources/download?public_key={}'
+
     def directlink(self):
         pk_request = requests.get(self.api.format('https://yadi.sk/i/awTwxgB2pXn8xw'))
         return pk_request.json().get('href')
 
     def run(self):
-
         direct_link = self.directlink()
         if direct_link:
             download = requests.get(direct_link)
@@ -92,7 +92,7 @@ class ValidValues(Task):
         wl = bf.active
         valuerows = []
         listrows = []
-        tod = datetime.datetime.now()
+        #tod = datetime.datetime.now()
         with self.input().open('r') as valide:
             for line in valide:
                 cur = line[:-1]
@@ -111,9 +111,13 @@ class ValidValues(Task):
         writer.writerow(['Дата', 'Время', 'Номер', 'Производитель', 'Источник', 'Штрафстоянка'])
         for line in rowslist:
             writer.writerow(line)
+        os.remove(DownloadData.filename)
+        os.remove(TimeSelect.filename)
+        os.remove(FiledSelect.filename)
 
-    def output(self):
-        return LocalTarget(self.filename)
+    # def output(self):
+    #    return LocalTarget(self.filename)
+
 
 '''
 ###Fails on Windows :(
@@ -159,8 +163,8 @@ class SparkCount(Task):
 
 if __name__ == '__main__':
     start_http_server(8000)
-    #luigi.build([ValidValues()])
-    #luigi.run()
+    # luigi.build([ValidValues()])
+    # luigi.run()
     while True:
         luigi.build([ValidValues()])
         time.sleep(500)
